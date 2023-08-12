@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0.30
+    container_name: db
+    command: --authentication_policy=*
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - /var/lib/mysql_8_c:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    restart: always
+    tty: true
+    stdin_open: true
+
+  mq:
+    image: rabbitmq:3.11-management-alpine
+    container_name: mq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - /var/lib/rabbitmq_3.11_c:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    ports:
+      - "5674:5672"
+      - "15672:15672"
+    restart: always
+    tty: true
+    stdin_open: true
+
+  cache:
+    image: redis:7.0.8-alpine
+    container_name: cache
+    volumes:
+      - /var/lib/redis_data_c:/data
+    ports:
+      - "6381:6379"
+    restart: always
+    tty: true
+    stdin_open: true
+
+  backend:
+    build: .
+    container_name: backend
+    # 将django后端收集到的静态文件持久化到本地，供nginx部署时使用
+    volumes:
+      - ./static:/root/evotrack/static
+      - ./logs:/root/evotrack/logs
+      - ./.env.prod:/root/evotrack/.env.prod
+    depends_on:
+      - db
+      - cache
+      - mq
+    ports:
+      - "8000:8000"
+    restart: always
+    tty: true
+    stdin_open: true
+
+  frontend:
+    build: evotrack-web
+    container_name: frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./static:/app/static
+      - ./evotrack-web/nginx.conf:/etc/nginx/nginx.conf
+      - ./evotrack-web/nginx_logs:/var/log/nginx
+    restart: always
+    depends_on:
+      - backend
+    tty: true
+    stdin_open: true
