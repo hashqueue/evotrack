@@ -9,7 +9,7 @@ from django_filters import rest_framework as filters
 
 from utils.drf_utils.custom_json_response import JsonResponse, unite_response_format_schema
 from system.serializers.departments import DepartmentCreateUpdateSerializer, DepartmentRetrieveSerializer, \
-    DepartmentTreeListSerializer, DepartmentBaseRetrieveSerializer
+    DepartmentTreeListSerializer, DepartmentBaseRetrieveSerializer, DepartmentBaseTreeListSerializer
 from system.models import Department
 from utils.drf_utils.model_utils import generate_object_tree_data, page_with_drf_original_format
 
@@ -40,7 +40,7 @@ class DepartmentViewSet(ModelViewSet):
         elif self.action == 'list':
             return DepartmentBaseRetrieveSerializer
         elif self.action == 'get_department_tree_list':
-            return DepartmentTreeListSerializer
+            return DepartmentBaseTreeListSerializer
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user.username, updated_by=self.request.user.username)
