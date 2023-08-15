@@ -10,7 +10,7 @@ from django_filters import rest_framework as filters
 from utils.drf_utils.custom_json_response import JsonResponse, unite_response_format_schema
 from system.serializers.users import UserRegisterSerializer, MyTokenObtainPairSerializer, UserCreateUpdateSerializer, \
     UserRetrieveSerializer, UserListDestroySerializer, UserResetPasswordSerializer, UserThinRetrieveSerializer, \
-    GetAllUserSerializer
+    GetAllUserSerializer, UserUpdateProfileSerializer, UserStatisticsSerializer
 from system.models import User
 
 
@@ -96,7 +96,7 @@ class UserViewSet(ModelViewSet):
     filterset_class = UserFilter
 
     def get_serializer_class(self):
-        if self.action in ['update', 'partial_update', 'create', 'update_profile']:
+        if self.action in ['update', 'partial_update', 'create']:
             return UserCreateUpdateSerializer
         elif self.action in ['list', 'destroy']:
             return UserListDestroySerializer
@@ -104,6 +104,8 @@ class UserViewSet(ModelViewSet):
             return UserRetrieveSerializer
         elif self.action == 'reset_password':
             return UserResetPasswordSerializer
+        elif self.action == 'update_profile':
+            return UserUpdateProfileSerializer
 
     @extend_schema(responses=unite_response_format_schema('create-user', UserCreateUpdateSerializer()))
     def create(self, request, *args, **kwargs):
@@ -168,14 +170,14 @@ class UserViewSet(ModelViewSet):
                 return JsonResponse(data=None, msg='success', success=True)
             raise serializers.ValidationError('旧密码验证失败')
 
-    @extend_schema(responses=unite_response_format_schema('update-profile', UserCreateUpdateSerializer()))
+    @extend_schema(responses=unite_response_format_schema('update-profile', UserUpdateProfileSerializer()))
     @action(methods=['PUT'], detail=False, url_path='update-profile')
     def update_profile(self, request, pk=None, version=None):
         """
         修改当前登录用户个人信息
         """
         instance = self.request.user
-        serializer = UserCreateUpdateSerializer(instance=instance, data=request.data, context={'request': request})
+        serializer = UserUpdateProfileSerializer(instance=instance, data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             if getattr(instance, '_prefetched_objects_cache', None):
@@ -203,11 +205,11 @@ class UserViewSet(ModelViewSet):
         return JsonResponse(data={'results': serializer.data, 'count': len(serializer.data)}, msg='success',
                             success=True)
 
-    # @extend_schema(responses=unite_response_format_schema('get-user-statistics', UserStatisticsSerializer()))
-    # @action(methods=['get'], detail=False, url_path='statistics')
-    # def get_user_statistics(self, request, pk=None, version=None):
-    #     """
-    #     获取当前用户拥有的所有数据(聚合统计)信息
-    #     """
-    #     serializer = UserStatisticsSerializer(instance=self.request.user, context={'request': request})
-    #     return JsonResponse(data=serializer.data, msg='success', success=True)
+    @extend_schema(responses=unite_response_format_schema('get-user-statistics', UserStatisticsSerializer()))
+    @action(methods=['get'], detail=False, url_path='statistics')
+    def get_user_statistics(self, request, pk=None, version=None):
+        """
+        获取当前用户拥有的聚合数据信息
+        """
+        serializer = UserStatisticsSerializer(instance=self.request.user, context={'request': request})
+        return JsonResponse(data=serializer.data, msg='success', success=True)
