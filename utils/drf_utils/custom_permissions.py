@@ -5,6 +5,7 @@
 # import re
 from rest_framework import permissions
 
+
 # from evotrack.settings import WHITE_URL_LIST
 
 
@@ -13,14 +14,15 @@ class RbacPermission(permissions.BasePermission):
     自定义权限类
     """
 
-    # def has_permission(self, request, view):
-    #     request_url_path = request.path
-    #     """演示环境禁止删除数据"""
-    #     # if request.method == 'DELETE':
-    #     #     return False
-    #     """如果用户是超级用户, 则放开权限(只用作系统初始化时注册的superuser用户添加初始数据时使用)"""
-    #     # if request.user.is_superuser:
-    #     #     return True
+    def has_permission(self, request, view):
+        """演示环境禁止删除数据"""
+        if request.method == 'DELETE':
+            return False
+        return True
+        # 如果用户是超级用户, 则放开权限
+        # 只用作系统初始化时通过python3 manage.py createsuperuser注册的superuser用户添加初始数据时使用
+        # if request.user.is_superuser:
+        #     return True
 
     # def has_object_permission(self, request, view, obj):
     #     """

@@ -6,10 +6,12 @@ django-filter==23.2
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 drf-spectacular==0.26.4
+gunicorn==21.2.0
 inflection==0.5.1
 jsonschema==4.18.4
 jsonschema-specifications==2023.7.1
 mysqlclient==2.2.0
+packaging==23.1
 Pillow==10.0.0
 PyJWT==2.8.0
 pytz==2023.3
