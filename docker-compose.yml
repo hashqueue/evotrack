@@ -16,33 +16,6 @@ services:
     tty: true
     stdin_open: true
 
-  mq:
-    image: rabbitmq:3.11-management-alpine
-    container_name: mq
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
-    volumes:
-      - /var/lib/rabbitmq_3.11_c:/var/lib/rabbitmq
-      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-    ports:
-      - "5674:5672"
-      - "15672:15672"
-    restart: always
-    tty: true
-    stdin_open: true
-
-  cache:
-    image: redis:7.0.8-alpine
-    container_name: cache
-    volumes:
-      - /var/lib/redis_data_c:/data
-    ports:
-      - "6381:6379"
-    restart: always
-    tty: true
-    stdin_open: true
-
   backend:
     build: .
     container_name: backend
@@ -53,8 +26,6 @@ services:
       - ./.env.prod:/root/evotrack/.env.prod
     depends_on:
       - db
-      - cache
-      - mq
     ports:
       - "8000:8000"
     restart: always

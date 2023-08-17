@@ -14,7 +14,7 @@ class Permission(BaseModel):
                                                  help_text='权限类型')
     parent = models.ForeignKey(to='self', null=True, blank=True, on_delete=models.SET_NULL, verbose_name="父权限",
                                help_text='父权限')
-    icon = models.CharField(max_length=64, blank=True, default='', verbose_name="图标", help_text='图标')
+    icon = models.CharField(max_length=64, blank=True, null=True, verbose_name="图标", help_text='图标')
     component = models.CharField(max_length=255, blank=True, default='', verbose_name='组件路径',
                                  help_text='组件路径')
     path = models.CharField(max_length=255, unique=True, blank=True, null=True, verbose_name='路由path',
