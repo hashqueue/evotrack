@@ -6,9 +6,6 @@
 from rest_framework import permissions
 
 
-# from evotrack.settings import WHITE_URL_LIST
-
-
 class RbacPermission(permissions.BasePermission):
     """
     自定义权限类

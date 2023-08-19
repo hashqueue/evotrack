@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps/'))
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('BASE_SECRET_KEY')
+SECRET_KEY = 'django-insecure-9t4so00x(3=cz=ozsm3vtgckt(21p%rw^!tviej%18)g8u5xw9'
 DEFAULT_USER_PASSWORD = env('BASE_DEFAULT_USER_PASSWORD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -125,15 +125,6 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
 }
 
-# url权限认证白名单
-WHITE_URL_LIST = [
-    # 需要放开的接口权限[allow anyone which is authenticated]
-    f'{API_PREFIX}/swagger/', f'{API_PREFIX}/redoc/', f'{API_PREFIX}/schema/', f'{API_PREFIX}/system/auth/login/',
-    f'{API_PREFIX}/system/auth/refresh-token/', f'{API_PREFIX}/system/auth/register/',
-    f'{API_PREFIX}/system/users/profile/', f'{API_PREFIX}/system/users/reset-password/',
-    f'{API_PREFIX}/system/permissions/get-user-permissions/'
-]
-
 AUTHENTICATION_BACKENDS = [
     # 自定义用户认证后端
     'utils.django_utils.custom_user_authentication_backend.MyCustomUserAuthBackend',
@@ -166,7 +157,7 @@ WSGI_APPLICATION = 'evotrack.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': env('DB_ENGINE'),
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
