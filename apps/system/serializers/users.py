@@ -2,6 +2,7 @@
 # @File    : users.py
 # @Software: PyCharm
 # @Description:
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -11,7 +12,6 @@ from drf_spectacular.types import OpenApiTypes
 from system.models import User, Role
 from system.serializers.departments import DepartmentBaseRetrieveSerializer
 from system.serializers.roles import RoleBaseRetrieveSerializer
-from evotrack.settings import DEFAULT_USER_PASSWORD
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -103,7 +103,7 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = super().create(validated_data)
         # 添加默认密码
-        user.set_password(DEFAULT_USER_PASSWORD)
+        user.set_password(settings.DEFAULT_USER_PASSWORD)
         user.save(update_fields=['password'])
         return user
 
