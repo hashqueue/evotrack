@@ -201,7 +201,8 @@ class UserViewSet(ModelViewSet):
         """
         查询所有用户列表
         """
-        serializer = UserThinRetrieveSerializer(self.queryset, many=True, context={'request': request})
+        queryset = User.objects.all().order_by('-id')
+        serializer = UserThinRetrieveSerializer(queryset, many=True, context={'request': request})
         return JsonResponse(data={'results': serializer.data, 'count': len(serializer.data)}, msg='success',
                             success=True)
 
